@@ -1,0 +1,84 @@
+name: Build DS ROMs
+
+'on':
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build ${{ matrix.variant }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - variant: release
+            build_command: 'make -j"$(nproc)" _arm7 _arm9 && make dlpdump.nds'
+            artifact_name: dlpdump-release
+            artifact_path: dlpdump.nds
+          - variant: debug
+            build_command: 'make -j"$(nproc)" _arm7_debug _arm9_debug && make dlpdump_debug.nds'
+            artifact_name: dlpdump-debug
+            artifact_path: dlpdump_debug.nds
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Build ${{ matrix.variant }} ROM
+        run: |
+          set -euxo pipefail
+          docker run --rm \
+            --user "$(id -u):$(id -g)" \
+            -v "$GITHUB_WORKSPACE:/workspace" \
+            -w /workspace \
+            devkitpro/devkitarm:latest \
+            sh -lc 'make clean && ${{ matrix.build_command }}'
+
+      - name: Upload ${{ matrix.variant }} artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: ${{ matrix.artifact_path }}
+          if-no-files-found: error
+
+  attach-release-assets:
+    name: Attach ROMs to GitHub Release
+    if: github.event_name == 'release'
+    needs: build
+    runs-on: ubuntu-latest
+
+    permissions:
+      actions: read
+      contents: write
+
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+          pattern: dlpdump-*
+          merge-multiple: true
+
+      - name: Attach ROMs to release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          set -euxo pipefail
+          test -f release-assets/dlpdump.nds
+          test -f release-assets/dlpdump_debug.nds
+          gh release upload "$RELEASE_TAG" \
+            release-assets/dlpdump.nds \
+            release-assets/dlpdump_debug.nds \
+            --repo "$GITHUB_REPOSITORY" \
+            --clobber

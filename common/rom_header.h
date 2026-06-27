@@ -1,0 +1,45 @@
+#pragma once
+
+/**
+ * @file rom_header.h
+ * @brief Nintendo DS ROM-header offsets used by reports and file assembly.
+ */
+
+#define ROM_HEADER_MIN_BYTES          0x160u
+#define ROM_HEADER_TITLE_OFF          0x000u
+#define ROM_HEADER_TITLE_BYTES        12u
+#define ROM_HEADER_GAME_CODE_OFF      0x00cu
+#define ROM_HEADER_GAME_CODE_BYTES    4u
+#define ROM_HEADER_UNIT_CODE_OFF      0x012u
+#define ROM_HEADER_REVISION_OFF       0x01eu
+#define ROM_HEADER_ARM9_ROM_OFF_OFF   0x020u
+#define ROM_HEADER_ARM9_ENTRY_OFF     0x024u
+#define ROM_HEADER_ARM9_LOAD_OFF      0x028u
+#define ROM_HEADER_ARM9_SIZE_OFF      0x02cu
+#define ROM_HEADER_ARM7_ROM_OFF_OFF   0x030u
+#define ROM_HEADER_ARM7_ENTRY_OFF     0x034u
+#define ROM_HEADER_ARM7_LOAD_OFF      0x038u
+#define ROM_HEADER_ARM7_SIZE_OFF      0x03cu
+#define ROM_HEADER_FNT_OFF_OFF        0x040u
+#define ROM_HEADER_FNT_SIZE_OFF       0x044u
+#define ROM_HEADER_FAT_OFF_OFF        0x048u
+#define ROM_HEADER_FAT_SIZE_OFF       0x04cu
+#define ROM_HEADER_ARM9_OVL_OFF_OFF   0x050u
+#define ROM_HEADER_ARM9_OVL_SIZE_OFF  0x054u
+#define ROM_HEADER_ARM7_OVL_OFF_OFF   0x058u
+#define ROM_HEADER_ARM7_OVL_SIZE_OFF  0x05cu
+#define ROM_HEADER_ARM9_AUTOLOAD_OFF  0x070u
+#define ROM_HEADER_ARM7_AUTOLOAD_OFF  0x074u
+#define ROM_HEADER_RSA_OFFSET_OFF     0x080u
+#define ROM_HEADER_LOGO_OFF           0x0c0u
+#define ROM_HEADER_LOGO_BYTES         156u
+#define ROM_HEADER_LOGO_CRC_OFF       0x15cu
+#define ROM_HEADER_HEADER_CRC_OFF     0x15eu
+#define ROM_HEADER_CRC_BYTES          0x15eu
+#define ROM_HEADER_EXPECTED_LOGO_CRC  0xcf56u
+
+#define ROM_HEADER_READ_BYTES         0x200u
+#define ROM_FILE_ALIGNMENT_BYTES      0x200u
+#define ROM_RSA_SIGNATURE_BLOCK_BYTES 0x88u
+#define ROM_HEADER_ARM9_ROM_OFF_MIN   0x200u
+#define ROM_HEADER_ARM7_ROM_OFF_MIN   0x200u
